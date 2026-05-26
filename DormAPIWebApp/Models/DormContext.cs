@@ -7,7 +7,6 @@ namespace DormAPIWebApp.Models
         public DormContext(DbContextOptions<DormContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<Student> Students { get; set; }
