@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="DormAPIWebApp.Tests/DormAPIWebApp.Tests.csproj" Id="e1e84f4b-0021-463c-b16f-c25a97e50245" />
   <Project Path="DormAPIWebApp/DormAPIWebApp.csproj" />
 </Solution>

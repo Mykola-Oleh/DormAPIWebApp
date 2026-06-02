@@ -1,10 +1,8 @@
-﻿/* ── DormSystem — site.js ── */
-
-let BASE_URL = 'https://localhost:7001';
+﻿let BASE_URL = 'http://localhost:8080';
 let dormsCache = [];
 let studentsCache = [];
 
-// ── CORE API ──────────────────────────────────────────────
+// ── CORE API
 async function api(path, method = 'GET', body = null) {
     const opts = { method, headers: { 'Content-Type': 'application/json' } };
     if (body) opts.body = JSON.stringify(body);
@@ -14,7 +12,7 @@ async function api(path, method = 'GET', body = null) {
     return r.json();
 }
 
-// ── URL CONFIG ───────────────────────────────────────────
+// ── URL CONFIG
 function updateBaseUrl() {
     BASE_URL = document.getElementById('baseUrlInput').value.replace(/\/$/, '');
     document.getElementById('api-url-display').textContent = BASE_URL.replace(/https?:\/\//, '');
@@ -29,7 +27,7 @@ async function testConnection() {
     }
 }
 
-// ── NAVIGATION ───────────────────────────────────────────
+// ── NAVIGATION
 function navigate(page) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('#sidebar .nav-link').forEach(n => n.classList.remove('active'));
@@ -67,7 +65,7 @@ function navigate(page) {
     if (page === 'payments') loadPaymentsPage();
 }
 
-// ── MODALS ────────────────────────────────────────────────
+// ── MODALS
 function openModal(name) {
     const el = document.getElementById('modal-' + name);
     if (el) {
@@ -84,14 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
         m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
     });
 
-    // Init defaults
     updateBaseUrl();
     loadDashboard();
     document.getElementById('ci-checkin').value = new Date().toISOString().slice(0, 10);
     document.getElementById('p-date').value = new Date().toISOString().slice(0, 10);
 });
 
-// ── TOAST ─────────────────────────────────────────────────
+// ── TOAST
 function toast(msg, type = 'success') {
     const c = document.getElementById('toast-container');
     const t = document.createElement('div');
@@ -101,7 +98,7 @@ function toast(msg, type = 'success') {
     setTimeout(() => t.remove(), 3500);
 }
 
-// ── UTILITIES ─────────────────────────────────────────────
+// ── UTILITIES
 function formatDate(d) {
     if (!d) return '—';
     return new Date(d).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -132,7 +129,7 @@ function loader(cols) {
     return `<tr><td colspan="${cols}" class="text-center py-4 text-muted"><span class="spinner-tiny"></span>Завантаження…</td></tr>`;
 }
 
-// ── DASHBOARD ─────────────────────────────────────────────
+// ── DASHBOARD
 async function loadDashboard() {
     try {
         const [dorms, rooms, students, checkins, payments] = await Promise.allSettled([
@@ -147,7 +144,6 @@ async function loadDashboard() {
         document.getElementById('stat-students').textContent = SS.length;
         document.getElementById('stat-checkins').textContent = CC.filter(c => !c.checkOutDate).length;
 
-        // Students widget
         const sb = document.getElementById('dash-students');
         sb.innerHTML = SS.length
             ? SS.slice(-5).reverse().map(s => `
@@ -161,7 +157,6 @@ async function loadDashboard() {
                 </div>`).join('')
             : '<div class="text-center text-muted py-3 small">Немає студентів</div>';
 
-        // Dorms widget
         const db = document.getElementById('dash-dorms');
         db.innerHTML = DD.length
             ? DD.map(d => `
@@ -174,7 +169,6 @@ async function loadDashboard() {
                 </div>`).join('')
             : '<div class="text-center text-muted py-3 small">Немає гуртожитків</div>';
 
-        // Payments widget
         const pb = document.getElementById('dash-payments');
         pb.innerHTML = PP.length
             ? PP.slice(-5).reverse().map(p => `
@@ -184,7 +178,6 @@ async function loadDashboard() {
                 </div>`).join('')
             : '<div class="text-center text-muted py-3 small">Немає платежів</div>';
 
-        // CheckIns widget
         const cb = document.getElementById('dash-checkins');
         const active = CC.filter(c => !c.checkOutDate);
         cb.innerHTML = active.length
@@ -198,7 +191,7 @@ async function loadDashboard() {
     } catch (e) { toast('Помилка dashboard: ' + e.message, 'error'); }
 }
 
-// ── DORMS ─────────────────────────────────────────────────
+// ── DORMS
 async function loadDorms() {
     document.getElementById('dorms-body').innerHTML = loader(5);
     try {
@@ -237,7 +230,7 @@ async function saveDorm() {
     } catch (e) { toast('Помилка: ' + e.message, 'error'); }
 }
 
-// ── ROOMS ─────────────────────────────────────────────────
+// ── ROOMS
 async function loadRoomsPage() {
     await populateDormSelects();
     await loadRooms();
@@ -310,7 +303,7 @@ async function saveRoom() {
     } catch (e) { toast('Помилка: ' + e.message, 'error'); }
 }
 
-// ── STUDENTS ──────────────────────────────────────────────
+// ── STUDENTS 
 async function loadStudentsPage() {
     await populateDormSelects();
     await loadStudents();
@@ -324,7 +317,6 @@ async function loadStudents() {
         studentsCache = await api(url) || [];
         renderStudents(studentsCache);
 
-        // populate payment student filter
         const sel = document.getElementById('payment-student-filter');
         if (sel) {
             const all = await api('/api/Students') || [];
@@ -415,7 +407,7 @@ async function deleteStudent(id) {
     } catch (e) { toast('Помилка: ' + e.message, 'error'); }
 }
 
-// ── CHECKINS ──────────────────────────────────────────────
+// ── CHECKINS
 async function loadCheckIns() {
     document.getElementById('checkins-body').innerHTML = loader(7);
     try {
@@ -458,7 +450,7 @@ async function saveCheckIn() {
     } catch (e) { toast('Помилка: ' + e.message, 'error'); }
 }
 
-// ── PAYMENTS ──────────────────────────────────────────────
+// ── PAYMENTS
 async function loadPaymentsPage() {
     loadStudents();
     await loadPayments();
@@ -509,7 +501,7 @@ async function savePayment() {
     } catch (e) { toast('Помилка: ' + e.message, 'error'); }
 }
 
-// ── API TESTER ────────────────────────────────────────────
+// ── API TESTER
 async function sendTestRequest() {
     const method = document.getElementById('test-method').value;
     const url = document.getElementById('test-url').value;

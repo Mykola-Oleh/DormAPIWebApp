@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DormAPIWebApp.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using DormAPIWebApp.Models;
 
 namespace DormAPIWebApp.Controllers
 {
