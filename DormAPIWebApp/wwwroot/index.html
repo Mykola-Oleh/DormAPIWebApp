@@ -1,0 +1,567 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DormSystem — Система управління гуртожитком</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+    <div id="main-wrapper">
+
+        <!-- ═══════════════ SIDEBAR ═══════════════ -->
+        <aside id="sidebar">
+            <div class="brand">
+                <div class="brand-title">🏠 DormSystem</div>
+                <div class="brand-sub">Управління гуртожитком</div>
+            </div>
+
+            <div class="nav-section-label">Головне</div>
+            <a class="nav-link active" data-nav="dashboard" onclick="navigate('dashboard')">🏠 Огляд</a>
+
+            <div class="nav-section-label">Дані</div>
+            <a class="nav-link" data-nav="dorms" onclick="navigate('dorms')">🏢 Гуртожитки</a>
+            <a class="nav-link" data-nav="rooms" onclick="navigate('rooms')">🚪 Кімнати</a>
+            <a class="nav-link" data-nav="students" onclick="navigate('students')">🎓 Студенти</a>
+            <a class="nav-link" data-nav="checkins" onclick="navigate('checkins')">📋 Заселення</a>
+            <a class="nav-link" data-nav="payments" onclick="navigate('payments')">💳 Платежі</a>
+
+            <div class="nav-section-label mt-auto pt-3" style="border-top:1px solid rgba(255,255,255,0.08)">API</div>
+            <a class="nav-link" data-nav="api" onclick="navigate('api')">⚡ API запити</a>
+        </aside>
+
+        <!-- ═══════════════ MAIN ═══════════════ -->
+        <div id="main-content">
+
+            <!-- TOP BAR -->
+            <div id="topbar">
+                <h6 id="topbar-title" class="mb-0">Огляд системи</h6>
+                <div class="api-url-badge">
+                    <span class="status-dot"></span>
+                    <span id="api-url-display">localhost:7001</span>
+                </div>
+                <button id="topbar-action" class="btn btn-primary btn-sm d-none">+ Додати</button>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="p-4">
+
+                <!-- URL CONFIG BAR -->
+                <div class="url-config-bar">
+                    <span>API:</span>
+                    <input class="url-config-input" id="baseUrlInput" value="https://localhost:7001"
+                           onchange="updateBaseUrl()" placeholder="https://localhost:7001">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="testConnection()">тест</button>
+                </div>
+
+                <!-- ─── DASHBOARD ─── -->
+                <div class="page active" id="page-dashboard">
+                    <div class="stats-grid">
+                        <div class="card text-center border-primary border-opacity-25">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Гуртожитки</div>
+                                <div class="fw-bold fs-3" id="stat-dorms">—</div>
+                                <div class="text-muted" style="font-size:0.75rem">всього будівель</div>
+                            </div>
+                        </div>
+                        <div class="card text-center border-info border-opacity-25">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Кімнати</div>
+                                <div class="fw-bold fs-3" id="stat-rooms">—</div>
+                                <div class="text-muted" style="font-size:0.75rem">всього кімнат</div>
+                            </div>
+                        </div>
+                        <div class="card text-center border-warning border-opacity-25">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Студенти</div>
+                                <div class="fw-bold fs-3" id="stat-students">—</div>
+                                <div class="text-muted" style="font-size:0.75rem">зареєстровано</div>
+                            </div>
+                        </div>
+                        <div class="card text-center border-danger border-opacity-25">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Активні заселення</div>
+                                <div class="fw-bold fs-3" id="stat-checkins">—</div>
+                                <div class="text-muted" style="font-size:0.75rem">наразі проживають</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold small">Останні студенти</span>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="navigate('students')">всі →</button>
+                                </div>
+                                <div id="dash-students"><div class="text-center text-muted py-3 small">Завантаження…</div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold small">Гуртожитки</span>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="navigate('dorms')">всі →</button>
+                                </div>
+                                <div id="dash-dorms"><div class="text-center text-muted py-3 small">Завантаження…</div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold small">Останні платежі</span>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="navigate('payments')">всі →</button>
+                                </div>
+                                <div id="dash-payments"><div class="text-center text-muted py-3 small">Завантаження…</div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span class="fw-semibold small">Активні заселення</span>
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="navigate('checkins')">всі →</button>
+                                </div>
+                                <div id="dash-checkins"><div class="text-center text-muted py-3 small">Завантаження…</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── DORMS ─── -->
+                <div class="page" id="page-dorms">
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" class="form-control" placeholder="🔍 Пошук гуртожитку…"
+                               oninput="filterTable('dorms-table', this.value)">
+                        <button class="btn btn-primary text-nowrap" onclick="openModal('dorm')">+ Додати</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="dorms-table">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>Назва</th><th>Адреса</th><th>Поверхи</th><th>Комендант</th></tr>
+                                </thead>
+                                <tbody id="dorms-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── ROOMS ─── -->
+                <div class="page" id="page-rooms">
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <input type="text" class="form-control" placeholder="🔍 Пошук кімнати…"
+                               oninput="filterTable('rooms-table', this.value)">
+                        <select class="form-select" id="rooms-dorm-filter" style="max-width:200px" onchange="loadRooms()">
+                            <option value="">Всі гуртожитки</option>
+                        </select>
+                        <button class="btn btn-outline-secondary text-nowrap" onclick="loadAvailableRooms()">Вільні кімнати</button>
+                        <button class="btn btn-primary text-nowrap" onclick="openModal('room')">+ Додати</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="rooms-table">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>Номер</th><th>Поверх</th><th>Тип</th><th>Місць</th><th>Гуртожиток</th><th>Доступність</th></tr>
+                                </thead>
+                                <tbody id="rooms-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── STUDENTS ─── -->
+                <div class="page" id="page-students">
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <input type="text" class="form-control" placeholder="🔍 Пошук студента…"
+                               oninput="filterTable('students-table', this.value)">
+                        <select class="form-select" id="students-dorm-filter" style="max-width:200px" onchange="loadStudents()">
+                            <option value="">Всі студенти</option>
+                        </select>
+                        <button class="btn btn-primary text-nowrap" onclick="openModal('student')">+ Додати</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="students-table">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>ПІБ</th><th>Квиток</th><th>Факультет</th><th>Дата народження</th><th>Контакт</th><th>Дії</th></tr>
+                                </thead>
+                                <tbody id="students-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── CHECKINS ─── -->
+                <div class="page" id="page-checkins">
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" class="form-control" placeholder="🔍 Пошук…"
+                               oninput="filterTable('checkins-table', this.value)">
+                        <button class="btn btn-primary text-nowrap" onclick="openModal('checkin')">+ Нове заселення</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="checkins-table">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>Студент ID</th><th>Кімната ID</th><th>Заселення</th><th>Виселення</th><th>Договір №</th><th>Статус</th></tr>
+                                </thead>
+                                <tbody id="checkins-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── PAYMENTS ─── -->
+                <div class="page" id="page-payments">
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <input type="text" class="form-control" placeholder="🔍 Пошук платежу…"
+                               oninput="filterTable('payments-table', this.value)">
+                        <select class="form-select" id="payment-student-filter" style="max-width:240px"
+                                onchange="loadTotalForStudent()">
+                            <option value="">Оберіть студента для суми</option>
+                        </select>
+                        <button class="btn btn-primary text-nowrap" onclick="openModal('payment')">+ Новий платіж</button>
+                    </div>
+
+                    <div id="total-payment-block">
+                        💰 <strong>Загальна сплачена сума:</strong>
+                        <span id="total-payment-val" class="ms-2 fw-bold text-primary"></span>
+                    </div>
+
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="payments-table">
+                                <thead class="table-light">
+                                    <tr><th>ID</th><th>Студент ID</th><th>Сума</th><th>Дата</th><th>Статус</th></tr>
+                                </thead>
+                                <tbody id="payments-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── API TESTER ─── -->
+                <div class="page" id="page-api">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header fw-semibold small">📡 Доступні endpoint'и</div>
+                                <div class="card-body p-0">
+                                    <table class="table table-sm mb-0">
+                                        <tbody>
+                                            <tr><td><span class="badge bg-success">GET</span></td><td><code>/api/Students</code></td></tr>
+                                            <tr><td><span class="badge bg-success">GET</span></td><td><code>/api/Students/{id}</code></td></tr>
+                                            <tr><td><span class="badge bg-info text-dark">POST</span></td><td><code>/api/Students</code></td></tr>
+                                            <tr><td><span class="badge bg-warning text-dark">PUT</span></td><td><code>/api/Students/{id}</code></td></tr>
+                                            <tr><td><span class="badge bg-danger">DEL</span></td><td><code>/api/Students/{id}</code></td></tr>
+                                            <tr><td><span class="badge bg-success">GET</span></td><td><code>/api/Dorms</code></td></tr>
+                                            <tr><td><span class="badge bg-success">GET</span></td><td><code>/api/Rooms/dorm/{id}/available</code></td></tr>
+                                            <tr><td><span class="badge bg-success">GET</span></td><td><code>/api/Payments/student/{id}/total</code></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header fw-semibold small">🔧 Тестовий запит</div>
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold">Метод</label>
+                                        <select class="form-select form-select-sm" id="test-method">
+                                            <option>GET</option>
+                                            <option>POST</option>
+                                            <option>PUT</option>
+                                            <option>DELETE</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-semibold">URL (відносний)</label>
+                                        <input class="form-control form-control-sm" id="test-url" value="/api/Students">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-semibold">Тіло (JSON, для POST/PUT)</label>
+                                        <textarea class="form-control form-control-sm" id="test-body" rows="4"
+                                                  placeholder='{"fullName":"Тест","ticketNumber":"STU001",...}'></textarea>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm w-100" onclick="sendTestRequest()">▶ Надіслати запит</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header fw-semibold small">📤 Відповідь API</div>
+                        <div class="card-body p-3">
+                            <pre id="api-response" class="api-response-pre">// тут з'явиться відповідь API…</pre>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /p-4 -->
+        </div><!-- /main-content -->
+    </div><!-- /main-wrapper -->
+    <!-- ═══════════════ MODALS ═══════════════ -->
+    <!-- Dorm Modal -->
+    <div class="modal-overlay" id="modal-dorm">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:480px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">🏢 Додати гуртожиток</h6>
+                    <button class="btn-close" onclick="closeModal('dorm')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Назва</label>
+                        <input class="form-control" id="dorm-name" placeholder="Гуртожиток №1">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Адреса</label>
+                        <input class="form-control" id="dorm-address" placeholder="вул. Університетська, 1">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Поверхів</label>
+                            <input class="form-control" id="dorm-floors" type="number" placeholder="5" min="1">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Комендант</label>
+                            <input class="form-control" id="dorm-manager" placeholder="Іваненко І.І.">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('dorm')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="saveDorm()">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Modal -->
+    <div class="modal-overlay" id="modal-room">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:480px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">🚪 Додати кімнату</h6>
+                    <button class="btn-close" onclick="closeModal('room')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Номер кімнати</label>
+                            <input class="form-control" id="room-number" placeholder="101">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Поверх</label>
+                            <input class="form-control" id="room-floor" type="number" placeholder="1" min="1">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Місткість</label>
+                            <input class="form-control" id="room-capacity" type="number" placeholder="3" min="1">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Тип</label>
+                            <select class="form-select" id="room-type">
+                                <option>Звичайна</option>
+                                <option>Покращена</option>
+                                <option>Люкс</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Гуртожиток</label>
+                        <select class="form-select" id="room-dorm-id"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('room')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="saveRoom()">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Modal -->
+    <div class="modal-overlay" id="modal-student">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">🎓 Додати студента</h6>
+                    <button class="btn-close" onclick="closeModal('student')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">ПІБ</label>
+                        <input class="form-control" id="s-fullname" placeholder="Шевченко Тарас Григорович">
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Номер студентського</label>
+                            <input class="form-control" id="s-ticket" placeholder="КН-2024-001">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Дата народження</label>
+                            <input class="form-control" id="s-dob" type="date">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Факультет</label>
+                            <input class="form-control" id="s-faculty" placeholder="ФІОТ">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Контакт</label>
+                            <input class="form-control" id="s-contact" placeholder="+380 00 000 0000">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('student')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="saveStudent()">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div class="modal-overlay" id="modal-edit-student">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">✏️ Редагувати студента</h6>
+                    <button class="btn-close" onclick="closeModal('edit-student')"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-s-id">
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">ПІБ</label>
+                        <input class="form-control" id="edit-s-fullname">
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Номер студентського</label>
+                            <input class="form-control" id="edit-s-ticket">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Дата народження</label>
+                            <input class="form-control" id="edit-s-dob" type="date">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Факультет</label>
+                            <input class="form-control" id="edit-s-faculty">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Контакт</label>
+                            <input class="form-control" id="edit-s-contact">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('edit-student')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="updateStudent()">Зберегти зміни</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CheckIn Modal -->
+    <div class="modal-overlay" id="modal-checkin">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">📋 Нове заселення</h6>
+                    <button class="btn-close" onclick="closeModal('checkin')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Студент ID</label>
+                            <input class="form-control" id="ci-student" type="number" placeholder="1" min="1">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Кімната ID</label>
+                            <input class="form-control" id="ci-room" type="number" placeholder="1" min="1">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Дата заселення</label>
+                            <input class="form-control" id="ci-checkin" type="date">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Дата виселення (необов.)</label>
+                            <input class="form-control" id="ci-checkout" type="date">
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold">Номер договору</label>
+                        <input class="form-control" id="ci-contract" placeholder="ДГ-2024-001">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('checkin')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="saveCheckIn()">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="modal-payment">
+        <div class="modal-dialog modal-dialog-centered w-100" style="max-width:460px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title">💳 Новий платіж</h6>
+                    <button class="btn-close" onclick="closeModal('payment')"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Студент ID</label>
+                            <input class="form-control" id="p-student" type="number" placeholder="1" min="1">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Сума (₴)</label>
+                            <input class="form-control" id="p-amount" type="number" placeholder="1200.00" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Дата платежу</label>
+                            <input class="form-control" id="p-date" type="date">
+                        </div>
+                        <div class="col">
+                            <label class="form-label small fw-semibold">Статус</label>
+                            <select class="form-select" id="p-status">
+                                <option>Сплачено</option>
+                                <option>Очікується</option>
+                                <option>Прострочено</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('payment')">Скасувати</button>
+                    <button class="btn btn-primary" onclick="savePayment()">Зберегти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container-custom" id="toast-container"></div>
+
+    <!-- Bootstrap JS bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App logic -->
+    <script src="site.js"></script>
+</body>
+</html>

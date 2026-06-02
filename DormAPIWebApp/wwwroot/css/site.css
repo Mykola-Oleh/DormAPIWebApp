@@ -1,31 +1,292 @@
-html {
-  font-size: 14px;
+﻿/* ── DormSystem — site.css ── */
+
+/* Sidebar */
+#sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background: #212529;
+    flex-shrink: 0;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    #sidebar .brand {
+        padding: 1.25rem 1rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    #sidebar .brand-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0;
+    }
+
+    #sidebar .brand-sub {
+        font-size: 0.72rem;
+        color: #6c757d;
+    }
+
+    #sidebar .nav-section-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #495057;
+        padding: 0.75rem 1rem 0.25rem;
+    }
+
+    #sidebar .nav-link {
+        color: #adb5bd;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        margin: 1px 6px;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.15s;
+    }
+
+        #sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.07);
+            text-decoration: none;
+        }
+
+        #sidebar .nav-link.active {
+            color: #fff;
+            background: #0d6efd;
+        }
+
+/* Main layout */
+#main-wrapper {
+    display: flex;
+    min-height: 100vh;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+#main-content {
+    flex: 1;
+    min-width: 0;
+    background: #f8f9fa;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Top bar */
+#topbar {
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-body {
-  margin-bottom: 60px;
+#topbar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    flex: 1;
+    margin: 0;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.api-url-badge {
+    font-family: monospace;
+    font-size: 0.78rem;
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #198754;
+    display: inline-block;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* Pages */
+.page {
+    display: none;
+}
+
+    .page.active {
+        display: block;
+    }
+
+/* URL config bar */
+.url-config-bar {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+    font-family: monospace;
+    font-size: 0.82rem;
+}
+
+    .url-config-bar span {
+        color: #6c757d;
+        flex-shrink: 0;
+    }
+
+.url-config-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    font-size: 0.82rem;
+    color: #0d6efd;
+    background: transparent;
+}
+
+/* Stats grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Modal tweaks */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+    align-items: center;
+    justify-content: center;
+}
+
+    .modal-overlay.open {
+        display: flex;
+    }
+
+/* Toast */
+.toast-container-custom {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.toast-custom {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    min-width: 240px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: slideIn 0.2s ease;
+}
+
+    .toast-custom.success {
+        border-left: 4px solid #198754;
+    }
+
+    .toast-custom.error {
+        border-left: 4px solid #dc3545;
+    }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* API page */
+.api-response-pre {
+    font-family: monospace;
+    font-size: 0.8rem;
+    background: #212529;
+    color: #20c997;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 320px;
+    overflow: auto;
+    white-space: pre-wrap;
+}
+
+/* Total payment block */
+#total-payment-block {
+    background: #e7f1ff;
+    border: 1px solid #b6d4fe;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    display: none;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Available room tag */
+.avail-yes {
+    color: #198754;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.avail-no {
+    color: #dc3545;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* Loader spinner */
+.spinner-tiny {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #dee2e6;
+    border-top-color: #0d6efd;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive sidebar hide on small screens */
+@media (max-width: 768px) {
+    #sidebar {
+        display: none;
+    }
 }
