@@ -124,13 +124,10 @@ namespace DormAPIWebApp.Tests
         [Fact]
         public async Task PostStudent_PersistsToDatabase()
         {
-            // Arrange
             var newStudent = new Student { FullName = "Тест", TicketNumber = "T-001", Faculty = "ФМФ", ContactInfo = "test" };
 
-            // Act
             await _controller.PostStudent(newStudent);
 
-            // Assert
             var saved = await _context.Students.FirstOrDefaultAsync(s => s.TicketNumber == "T-001");
             Assert.NotNull(saved);
             Assert.Equal("Тест", saved!.FullName);
@@ -140,30 +137,22 @@ namespace DormAPIWebApp.Tests
         [Fact]
         public async Task PutStudent_ReturnsBadRequest_WhenIdMismatch()
         {
-            // Arrange
             var student = new Student { Id = 5, FullName = "X", TicketNumber = "X", Faculty = "X", ContactInfo = "X" };
 
-            // Act
             var result = await _controller.PutStudent(99, student);
 
-            // Assert
             Assert.IsType<BadRequestResult>(result);
         }
 
-        // ═══════════════════════════════════════════════════════════
         // DELETE /api/Students/{id}
-        // ═══════════════════════════════════════════════════════════
 
         [Fact]
         public async Task DeleteStudent_RemovesStudent_ReturnsNoContent()
         {
-            // Arrange
             await SeedStudentsAsync();
 
-            // Act
             var result = await _controller.DeleteStudent(2);
 
-            // Assert
             Assert.IsType<NoContentResult>(result);
             Assert.Equal(2, await _context.Students.CountAsync());
             Assert.Null(await _context.Students.FindAsync(2));
@@ -172,10 +161,8 @@ namespace DormAPIWebApp.Tests
         [Fact]
         public async Task DeleteStudent_ReturnsNotFound_WhenMissing()
         {
-            // Act
             var result = await _controller.DeleteStudent(999);
 
-            // Assert
             Assert.IsType<NotFoundResult>(result);
         }
     }
